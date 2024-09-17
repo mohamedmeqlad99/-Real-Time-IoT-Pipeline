@@ -12,3 +12,18 @@ def generate_iot_data():
     humidity = round(random.uniform(30.0, 90.0), 2)  # Humidity percentage
     battery_level = random.randint(10, 100)  # Battery percentage
     device_status = random.choice(["active", "inactive", "faulty"])  # Random status
+
+    iot_data = {
+        'device_id' : device_id,
+        'timestamp' : timestamp,
+        'temperature' : temperature,
+        'humidity' : humidity,
+        'battery_level' : battery_level,
+        'device_status' : device_status
+    
+    }
+    return json.dumps(iot_data)
+for i in range(1000):
+ data = generate_iot_data()
+ print(data)
+ time.sleep(1)
