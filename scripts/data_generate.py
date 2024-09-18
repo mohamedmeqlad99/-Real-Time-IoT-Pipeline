@@ -1,8 +1,7 @@
 from faker import Faker
 import time
-import json
+import csv
 import random
-import os
 
 fake = Faker()
 
@@ -16,33 +15,20 @@ def generate_iot_data(device_id):
     battery_level = random.randint(10, 100)  # Battery percentage
     device_status = random.choice(["active", "inactive", "faulty"])  # Random status
 
-    return {
-        'device_id': device_id,
-        'timestamp': timestamp,
-        'temperature': temperature,
-        'humidity': humidity,
-        'battery_level': battery_level,
-        'device_status': device_status
-    }
+    return [device_id, timestamp, temperature, humidity, battery_level, device_status]
 
-# Create a directory for JSON files if it does not exist
-os.makedirs('json_data', exist_ok=True)
-
-def write_data_to_json(data, file_index):
-    filename = f'json_data/iteration_{file_index}.json'
-    with open(filename, 'w') as file:
-        json.dump(data, file, indent=4)
-
-file_index = 1
-
-while True:
-    random.shuffle(device_list)  # Shuffle the device list before each cycle
-    batch_data = []
-
-    for device_id in device_list:  # Iterate through all 100 devices
-        data = generate_iot_data(device_id)
-        batch_data.append(data)
-        time.sleep(1)  # Wait for 1 second before generating the next record
+# Write data to CSV file
+with open('iot_data.csv', mode='w', newline='') as file:
+    writer = csv.writer(file)
     
-    write_data_to_json(batch_data, file_index)
-    file_index += 1
+    # Write the header row
+    writer.writerow(["device_id", "timestamp", "temperature", "humidity", "battery_level", "device_status"])
+    
+    while True:
+        random.shuffle(device_list) 
+        
+        for device_id in device_list:  
+            data = generate_iot_data(device_id)
+            writer.writerow(data)
+            time.sleep(1) 
+
