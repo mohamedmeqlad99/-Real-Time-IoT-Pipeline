@@ -22,3 +22,8 @@ dag = DAG(
     schedule=timedelta(minutes=5),
 )
 
+def generate_iot_data():
+    script_path = '/home/meqlad/-Real-Time-IoT-Pipeline/scripts/data_generate.py'
+    subprocess.run(['python',script_path])
+
+    
