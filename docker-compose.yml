@@ -1,0 +1,54 @@
+version: '3.7'
+services:
+  airflow:
+    image: airflow_iot:latest  # Name of the image built from the Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      AIRFLOW__CORE__EXECUTOR: "SequentialExecutor"
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+    volumes:
+      - ./dags:/opt/airflow/dags
+    ports:
+      - "8080:8080"
+    command: "webserver"
+    restart: always
+
+  scheduler:
+    image: airflow_iot:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      AIRFLOW__CORE__EXECUTOR: "SequentialExecutor"
+    volumes:
+      - ./dags:/opt/airflow/dags
+    command: "scheduler"
+    depends_on:
+      - airflow
+    restart: always
+
+  worker:
+    image: airflow_iot:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      AIRFLOW__CORE__EXECUTOR: "SequentialExecutor"
+    volumes:
+      - ./dags:/opt/airflow/dags
+    command: "worker"
+    restart: always
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
