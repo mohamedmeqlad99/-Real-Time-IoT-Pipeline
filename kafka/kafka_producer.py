@@ -1,11 +1,30 @@
-from kafka import KafkaProducer
+from faker import Faker
+import time
 import json
-from scripts.data_generate import generate_iot_data
+import random
 
-producer = KafkaProducer(bootstrap_servers='localhost:9092',
-                         value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+fake = Faker()
 
-def produce_data():
-    while True:
-        data = generate_iot_data()
-        producer.send('iot_data', value=data)
+def generate_iot_data():
+    device_id = fake.uuid4()
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    temperature = round(random.uniform(15.0, 35.0), 2)
+    humidity = round(random.uniform(30.0, 90.0), 2)
+    battery_level = random.randint(10, 100)
+    device_status = random.choice(["active", "inactive", "faulty"])
+
+    iot_data = {
+        'device_id': device_id,
+        'timestamp': timestamp,
+        'temperature': temperature,
+        'humidity': humidity,
+        'battery_level': battery_level,
+        'device_status': device_status
+    }
+    return json.dumps(iot_data)
+
+while True:
+    data = generate_iot_data()
+    # Send data to Kafka
+    print(data)  # Replace with Kafka producer logic
+    time.sleep(1)
