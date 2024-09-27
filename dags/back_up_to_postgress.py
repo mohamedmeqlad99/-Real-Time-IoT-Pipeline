@@ -22,7 +22,7 @@ def backup_to_postgres():
     conn.close()
 
 default_args = {
-    'start_date': datetime(2024, 1, 1),
+    'start_date': datetime.now(),
 }
 
 with DAG('backup_to_postgres', default_args=default_args, schedule_interval='@daily') as dag:

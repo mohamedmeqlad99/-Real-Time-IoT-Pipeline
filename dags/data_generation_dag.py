@@ -5,7 +5,7 @@ from airflow.providers.apache.kafka.hooks.kafka import KafkaConsumer
 from datetime import datetime
 
 default_args = {
-    'start_date': datetime(2024, 1, 1),
+    'start_date': datetime.now(),
 }
 
 with DAG(dag_id='iot_data_pipeline', default_args=default_args, schedule_interval='@daily') as dag:
