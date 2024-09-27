@@ -1,6 +1,6 @@
 # **IoT Data Engineering Pipeline**
 
-![Project Image](![image](https://github.com/user-attachments/assets/0ccb87dd-494a-464a-a4a4-8d1c265d91b6)
+![Project Image](![image](./pics/Screenshot from 2024-09-27 16-10-27.png)
 )
 
 This project demonstrates a complete IoT data engineering pipeline. The pipeline simulates IoT data using Faker, processes it in real-time using Kafka and Spark, backs up the processed data to PostgreSQL, and visualizes the data using Matplotlib.
