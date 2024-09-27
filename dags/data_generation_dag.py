@@ -1,35 +1,22 @@
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.operators.dummy_operator import DummyOperator
+from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
+from airflow.providers.apache.kafka.hooks.kafka import KafkaConsumer
 from datetime import datetime
-from kafka import KafkaProducer
-from faker import Faker
-import json
-import random
-import time
 
-fake = Faker()
+default_args = {
+    'start_date': datetime(2024, 1, 1),
+}
 
-def generate_fake_data():
-    producer = KafkaProducer(bootstrap_servers='localhost:9092')
+with DAG(dag_id='iot_data_pipeline', default_args=default_args, schedule_interval='@daily') as dag:
+    
+    start = DummyOperator(task_id='start')
 
-    for _ in range(100): 
-        data = {
-            'device_id': random.randint(1, 100),  
-            'temperature': random.randint(20, 30),
-            'humidity': random.randint(30, 70),
-            'timestamp': fake.date_time_this_month().isoformat()
-        }
-        producer.send('iot_data', json.dumps(data).encode('utf-8'))
-        print(f"Sent data: {data}")
-        time.sleep(1)  
-
-with DAG(
-    dag_id='data_generation_dag',
-    schedule_interval='@once',  
-    start_date=datetime.now(),
-    catchup=False
-) as dag:
-    generate_data_task = PythonOperator(
-        task_id='generate_fake_data',
-        python_callable=generate_fake_data
+    spark_task = SparkSubmitOperator(
+        task_id='spark_process_iot_data',
+        application='/path/to/spark/process_iot_data.py',
+        conn_id='spark_default',
+        verbose=True
     )
+
+    start >> spark_task
